@@ -10,6 +10,7 @@ tags:
   - name: DocumentTypeControllerV1
   - name: FileControllerV1
   - name: SupportedMimeTypeControllerV1
+  - name: AttachmentControllerV1
 paths:
   /v1/document/search:
     post:
@@ -1079,6 +1080,33 @@ paths:
           description: Bad request
         '403':
           description: Not Authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestException'
+  /v1/attachment/{attachmentId}:
+    get:
+      tags:
+        - AttachmentControllerV1
+      operationId: getAttachmentDetails
+      description: get details of given attachment
+      parameters:
+        - name: attachmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attachment'
         '404':
           description: Not found
         '500':
