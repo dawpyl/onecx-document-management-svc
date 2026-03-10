@@ -12,7 +12,7 @@ import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 import gen.org.onecx.document.management.rs.v1.model.DocumentSpecificationCreateUpdateDTO;
 import gen.org.onecx.document.management.rs.v1.model.DocumentSpecificationDTO;
 
-@Mapper(componentModel = "cdi", uses = OffsetDateTimeMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Mapper(componentModel = "jakarta-cdi", uses = OffsetDateTimeMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface DocumentSpecificationMapper {
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "creationUser", ignore = true)

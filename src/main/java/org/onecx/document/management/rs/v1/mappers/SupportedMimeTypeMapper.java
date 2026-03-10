@@ -12,7 +12,7 @@ import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 import gen.org.onecx.document.management.rs.v1.model.SupportedMimeTypeCreateUpdateDTO;
 import gen.org.onecx.document.management.rs.v1.model.SupportedMimeTypeDTO;
 
-@Mapper(componentModel = "cdi", uses = OffsetDateTimeMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Mapper(componentModel = "jakarta-cdi", uses = OffsetDateTimeMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface SupportedMimeTypeMapper {
 
     @Mapping(target = "creationDate", ignore = true)

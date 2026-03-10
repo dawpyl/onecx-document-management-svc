@@ -25,7 +25,7 @@ import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import gen.org.onecx.document.management.rs.v1.model.*;
 
-@Mapper(componentModel = "cdi", uses = OffsetDateTimeMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Mapper(componentModel = "jakarta-cdi", uses = OffsetDateTimeMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface DocumentMapper {
     @Mapping(target = "removeTagsItem", ignore = true)
     @Mapping(target = "removeDocumentRelationshipsItem", ignore = true)
