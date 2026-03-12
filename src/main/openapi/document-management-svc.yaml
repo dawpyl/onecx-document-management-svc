@@ -1088,6 +1088,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RestException'
+  /v1/attachment/metadata:
+    patch:
+      tags:
+        - AttachmentControllerV1
+      operationId: uploadAttachmentsMetadata
+      description: Upload metadata for selected attachments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/AttachmentMetadataUpload'
+      responses:
+        "200":
+          description: Metadata updated
+        "400":
+          description: Bad request
+        "500":
+          description: Internal server error
+  /v1/attachment/storage-audit:
+    post:
+      tags:
+        - AttachmentControllerV1
+      operationId: createStorageAuditsForAttachments
+      description: Create storage audit log for failed attachments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/AttachmentStorageAuditRequest'
+      responses:
+        "201":
+          description: Storage audit logs created
+        "400":
+          description: Bad request
+        "500":
+          description: Server error
   /v1/attachment/{attachmentId}:
     get:
       tags:
@@ -1840,7 +1880,27 @@ components:
         lastModifiedDate:
           type: string
           format: date-time
-
+    AttachmentMetadataUpload:
+      type: object
+      properties:
+        attachmentId:
+          type: string
+        size:
+          type: integer
+          format: int64
+        sizeUnit:
+          type: string
+        storage:
+          type: string
+        type:
+          type: string
+    AttachmentStorageAuditRequest:
+      type: object
+      properties:
+        attachmentId:
+          type: string
+        documentId:
+          type: string
     DocumentResponse:
       allOf:
         - $ref: '#/components/schemas/Traceable'
