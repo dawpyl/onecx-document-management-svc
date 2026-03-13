@@ -13,6 +13,7 @@ import org.onecx.document.management.domain.daos.DocumentDAO;
 import org.onecx.document.management.domain.daos.StorageUploadAuditDAO;
 import org.onecx.document.management.domain.models.entities.Attachment;
 import org.onecx.document.management.rs.v1.exception.RestException;
+import org.onecx.document.management.rs.v1.exception.RestExceptionCode;
 import org.onecx.document.management.rs.v1.mappers.DocumentMapper;
 
 import gen.org.onecx.document.management.rs.v1.model.AttachmentMetadataUploadDTO;
@@ -33,11 +34,17 @@ public class AttachmentService {
     @Inject
     DocumentMapper documentMapper;
 
+    private static final String ATT_NOT_FOUND_MSG = "Attachment %s not found";
+    private static final String DOC_NOT_FOUND_MSG = "Document %s not found";
+
     public Attachment getAttachmentDetails(final String attachmentId) {
         final var attachment = attachmentDAO.findById(attachmentId);
+
         if (Objects.isNull(attachment)) {
-            throw new RestException(Response.Status.NOT_FOUND);
+            throwNotFoundException(String.format(ATT_NOT_FOUND_MSG, attachmentId),
+                    RestExceptionCode.ATTACHMENT_NOT_FOUND);
         }
+
         return attachment;
     }
 
@@ -45,9 +52,12 @@ public class AttachmentService {
     public void updateAttachmentsMetadata(List<AttachmentMetadataUploadDTO> attachmentMetadataUploadDTO) {
         for (AttachmentMetadataUploadDTO dto : attachmentMetadataUploadDTO) {
             final var attachmentToUpdate = attachmentDAO.findById(dto.getAttachmentId());
+
             if (Objects.isNull(attachmentToUpdate)) {
-                throw new RestException(Response.Status.NOT_FOUND);
+                throwNotFoundException(String.format(ATT_NOT_FOUND_MSG, dto.getAttachmentId()),
+                        RestExceptionCode.ATTACHMENT_NOT_FOUND);
             }
+
             final var updatedAttachment = documentMapper.updateAttachment(dto, attachmentToUpdate);
             updatedAttachment.setStorageUploadStatus(true);
             attachmentDAO.update(updatedAttachment);
@@ -59,11 +69,26 @@ public class AttachmentService {
         for (AttachmentStorageAuditRequestDTO request : requests) {
             final var document = documentDAO.findDocumentById(request.getDocumentId());
             final var attachment = attachmentDAO.findById(request.getAttachmentId());
-            if (Objects.isNull(document) || Objects.isNull(attachment)) {
-                throw new RestException(Response.Status.NOT_FOUND);
+
+            if (Objects.isNull(document)) {
+                var msg = String.format(DOC_NOT_FOUND_MSG, request.getDocumentId());
+                throwNotFoundException(msg, RestExceptionCode.DOCUMENT_NOT_FOUND);
             }
+            if (Objects.isNull(attachment)) {
+                var msg = String.format(ATT_NOT_FOUND_MSG, request.getAttachmentId());
+                throwNotFoundException(msg, RestExceptionCode.ATTACHMENT_NOT_FOUND);
+            }
+
             final var audit = documentMapper.mapToStorageUploadAudit(request.getDocumentId(), document, attachment);
             uploadAuditDAO.create(audit);
         }
+    }
+
+    private void throwNotFoundException(final String message, final RestExceptionCode code) {
+        throw RestException.builder()
+                .status(Response.Status.NOT_FOUND)
+                .errorCode(code)
+                .message(message)
+                .build();
     }
 }

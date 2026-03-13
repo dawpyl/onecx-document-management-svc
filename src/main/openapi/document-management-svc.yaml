@@ -1104,10 +1104,12 @@ paths:
       responses:
         "200":
           description: Metadata updated
-        "400":
-          description: Bad request
-        "500":
-          description: Internal server error
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /v1/attachment/storage-audit:
     post:
       tags:
@@ -1124,10 +1126,12 @@ paths:
       responses:
         "201":
           description: Storage audit logs created
-        "400":
-          description: Bad request
-        "500":
-          description: Server error
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /v1/attachment/{attachmentId}:
     get:
       tags:
@@ -1149,13 +1153,10 @@ paths:
                 $ref: '#/components/schemas/Attachment'
         '404':
           description: Not found
-        '500':
-          description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RestException'
-
+                $ref: '#/components/schemas/ProblemDetailResponse'
 components:
   schemas:
     AttachmentCreateUpdate:
@@ -1928,6 +1929,35 @@ components:
         bucket:
           type: string
           description: Name of bucket.
+    ProblemDetailResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        detail:
+          type: string
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailParam'
+        invalidParams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailInvalidParam'
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
   securitySchemes:
     oauth2:
       type: oauth2

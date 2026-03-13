@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.onecx.document.management.rs.v1.exception.RestException;
 import org.onecx.document.management.rs.v1.mappers.DocumentMapper;
+import org.onecx.document.management.rs.v1.mappers.ExceptionMapper;
 import org.onecx.document.management.rs.v1.services.AttachmentService;
 
 import gen.org.onecx.document.management.rs.v1.AttachmentControllerV1Api;
@@ -23,6 +24,9 @@ public class AttachmentController implements AttachmentControllerV1Api {
 
     @Inject
     DocumentMapper mapper;
+
+    @Inject
+    ExceptionMapper exceptionMapper;
 
     @Override
     public Response getAttachmentDetails(String attachmentId) {
@@ -45,13 +49,8 @@ public class AttachmentController implements AttachmentControllerV1Api {
 
     @ServerExceptionMapper
     public Response handleRestException(RestException exception) {
-        if (exception.getErrorCode().equals(Response.Status.NOT_FOUND)) {
-            return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .build();
-        }
-        return Response
-                .status(Response.Status.INTERNAL_SERVER_ERROR)
+        return Response.status(exception.getStatus())
+                .entity(exceptionMapper.map(exception))
                 .build();
     }
 }
