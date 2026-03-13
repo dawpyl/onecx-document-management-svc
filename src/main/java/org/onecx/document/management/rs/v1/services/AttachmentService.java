@@ -22,20 +22,22 @@ import gen.org.onecx.document.management.rs.v1.model.AttachmentStorageAuditReque
 @ApplicationScoped
 public class AttachmentService {
 
-    @Inject
-    AttachmentDAO attachmentDAO;
-
-    @Inject
-    DocumentDAO documentDAO;
-
-    @Inject
-    StorageUploadAuditDAO uploadAuditDAO;
-
-    @Inject
-    DocumentMapper documentMapper;
+    private final AttachmentDAO attachmentDAO;
+    private final DocumentDAO documentDAO;
+    private final StorageUploadAuditDAO uploadAuditDAO;
+    private final DocumentMapper documentMapper;
 
     private static final String ATT_NOT_FOUND_MSG = "Attachment %s not found";
     private static final String DOC_NOT_FOUND_MSG = "Document %s not found";
+
+    @Inject
+    public AttachmentService(AttachmentDAO attachmentDAO, DocumentDAO documentDAO,
+            StorageUploadAuditDAO storageUploadAuditDAO, DocumentMapper documentMapper) {
+        this.attachmentDAO = attachmentDAO;
+        this.documentDAO = documentDAO;
+        this.uploadAuditDAO = storageUploadAuditDAO;
+        this.documentMapper = documentMapper;
+    }
 
     public Attachment getAttachmentDetails(final String attachmentId) {
         final var attachment = attachmentDAO.findById(attachmentId);
@@ -85,10 +87,6 @@ public class AttachmentService {
     }
 
     private void throwNotFoundException(final String message, final RestExceptionCode code) {
-        throw RestException.builder()
-                .status(Response.Status.NOT_FOUND)
-                .errorCode(code)
-                .message(message)
-                .build();
+        throw new RestException(code, Response.Status.NOT_FOUND, message);
     }
 }

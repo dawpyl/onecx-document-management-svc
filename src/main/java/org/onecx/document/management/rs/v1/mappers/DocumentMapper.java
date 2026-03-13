@@ -194,6 +194,8 @@ public interface DocumentMapper {
     @Mapping(target = "mimeType", ignore = true)
     @Mapping(target = "file", ignore = true)
     @Mapping(target = "fileName", ignore = true)
+    @Mapping(target = "sizeUnit", ignore = true)
+    @Mapping(target = "storage", ignore = true)
     Attachment updateAttachment(AttachmentMetadataUploadDTO dto, @MappingTarget Attachment attachment);
 
     @Mapping(target = "creationDate", ignore = true)

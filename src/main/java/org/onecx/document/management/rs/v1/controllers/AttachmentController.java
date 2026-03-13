@@ -15,7 +15,9 @@ import org.onecx.document.management.rs.v1.services.AttachmentService;
 import gen.org.onecx.document.management.rs.v1.AttachmentControllerV1Api;
 import gen.org.onecx.document.management.rs.v1.model.AttachmentMetadataUploadDTO;
 import gen.org.onecx.document.management.rs.v1.model.AttachmentStorageAuditRequestDTO;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ApplicationScoped
 public class AttachmentController implements AttachmentControllerV1Api {
 
@@ -47,7 +49,7 @@ public class AttachmentController implements AttachmentControllerV1Api {
         return Response.status(Response.Status.CREATED).build();
     }
 
-    @ServerExceptionMapper
+    @ServerExceptionMapper(priority = 1)
     public Response handleRestException(RestException exception) {
         return Response.status(exception.getStatus())
                 .entity(exceptionMapper.map(exception))
