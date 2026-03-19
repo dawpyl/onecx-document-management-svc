@@ -43,7 +43,7 @@ public class AttachmentService {
         final var attachment = attachmentDAO.findById(attachmentId);
 
         if (Objects.isNull(attachment)) {
-            throwNotFoundException(String.format(ATT_NOT_FOUND_MSG, attachmentId),
+            throw createNotFoundException(String.format(ATT_NOT_FOUND_MSG, attachmentId),
                     RestExceptionCode.ATTACHMENT_NOT_FOUND);
         }
 
@@ -56,7 +56,7 @@ public class AttachmentService {
             final var attachmentToUpdate = attachmentDAO.findById(dto.getAttachmentId());
 
             if (Objects.isNull(attachmentToUpdate)) {
-                throwNotFoundException(String.format(ATT_NOT_FOUND_MSG, dto.getAttachmentId()),
+                throw createNotFoundException(String.format(ATT_NOT_FOUND_MSG, dto.getAttachmentId()),
                         RestExceptionCode.ATTACHMENT_NOT_FOUND);
             }
 
@@ -74,11 +74,11 @@ public class AttachmentService {
 
             if (Objects.isNull(document)) {
                 var msg = String.format(DOC_NOT_FOUND_MSG, request.getDocumentId());
-                throwNotFoundException(msg, RestExceptionCode.DOCUMENT_NOT_FOUND);
+                throw createNotFoundException(msg, RestExceptionCode.DOCUMENT_NOT_FOUND);
             }
             if (Objects.isNull(attachment)) {
                 var msg = String.format(ATT_NOT_FOUND_MSG, request.getAttachmentId());
-                throwNotFoundException(msg, RestExceptionCode.ATTACHMENT_NOT_FOUND);
+                throw createNotFoundException(msg, RestExceptionCode.ATTACHMENT_NOT_FOUND);
             }
 
             final var audit = documentMapper.mapToStorageUploadAudit(request.getDocumentId(), document, attachment);
@@ -86,7 +86,7 @@ public class AttachmentService {
         }
     }
 
-    private void throwNotFoundException(final String message, final RestExceptionCode code) {
-        throw new RestException(code, Response.Status.NOT_FOUND, message);
+    private RestException createNotFoundException(final String message, final RestExceptionCode code) {
+        return new RestException(code, Response.Status.NOT_FOUND, message);
     }
 }
